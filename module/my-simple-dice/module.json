@@ -1,0 +1,27 @@
+{
+  "id": "my-simple-dice",
+  "title": "My Simple System – Custom D6",
+  "description": "Adds a custom D6 appearance for My Simple System using Dice So Nice.",
+  "version": "0.1.0",
+  "compatibility": {
+    "minimum": 12,
+    "verified": 13
+  },
+  "authors": [
+    {
+      "name": "Panisara Thepthong"
+    }
+  ],
+  "esmodules": [
+    "scripts/custom-dice.mjs"
+  ],
+  "system": ["my-simple-system"],
+  "relationships": {
+    "requires": [
+      {
+        "id": "dice-so-nice",
+        "type": "module"
+      }
+    ]
+  }
+}

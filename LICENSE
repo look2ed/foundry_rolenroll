@@ -1,0 +1,24 @@
+# Role&Roll – FoundryVTT Test System
+
+This is an **unofficial, fan-made** Foundry Virtual Tabletop system created
+to experiment with running the **Role&Roll** TRPG on FoundryVTT.
+
+- **Original game:** Role&Roll TRPG  
+- **Owner:** BGN Squad  
+- **Author of this Foundry system:** Panisara Thepthong  
+- **Status:** Personal / testing project, not affiliated with BGN Squad.
+
+## Legal
+
+Role&Roll, and all related game rules, setting, names, and artwork are
+the intellectual property of **BGN Squad**. I do **not** own the Role&Roll
+system and make no claim to it.
+
+This repository only contains:
+
+- system configuration and code specific to FoundryVTT
+- my own implementation of dice mechanics and UI for testing
+
+It is provided purely for personal / experimental use.  
+If BGN Squad requests changes or removal, I will comply.
+
