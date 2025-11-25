@@ -1,0 +1,59 @@
+/* Styles for My Simple System */
+/* Role&Roll chat styling */
+
+.role-roll-chat {
+  border: 1px solid #888;
+  padding: 6px;
+  border-radius: 4px;
+  margin-top: 4px;
+  font-size: 13px;
+}
+
+.role-roll-header {
+  margin-bottom: 4px;
+}
+
+.role-roll-dice-row {
+  margin: 4px 0 6px 0;
+}
+
+.role-roll-die {
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  width: 20px;
+  height: 20px;
+  margin-right: 2px;
+  border: 1px solid #555;
+  border-radius: 3px;
+  font-size: 14px;
+  line-height: 1;
+}
+
+.role-roll-total {
+  margin-top: 4px;
+  color: #c62828;        /* nice red */
+  font-weight: 700;      /* bold */
+  font-size: 14px;
+}
+
+/* optional: little colour hints per face type */
+.role-roll-face-point {
+  background-color: #fff879;
+}
+
+.role-roll-face-reroll {
+  background-color: #5abaff;
+}
+
+.role-roll-face-plus {
+  background-color: #6dff79;
+}
+
+.role-roll-face-minus {
+  background-color: #ff6868;
+}
+
+.role-roll-face-blank {
+  background-color: #ffffff;
+}
