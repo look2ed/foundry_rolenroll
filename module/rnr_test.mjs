@@ -1,5 +1,5 @@
 // ===============================
-// RolEnRoll Dice System Logic
+// Role&Roll Dice System Logic
 // ===============================
 
 // Keep value between min and max
@@ -19,14 +19,18 @@ function buildDieFaces(config = {}) {
   const faces = ["1", "", "", "", "", "R"]; // index 0..5 (die sides 1..6)
 
   if (kind === "adv") {
-    const plusCount = clamp(config.plusCount ?? 1, 1, 4);
+    let plusCount = config.plusCount ?? 1;
+    if (plusCount > 4) plusCount = 4;
+    plusCount = clamp(plusCount, 1, 4);
     for (let i = 0; i < plusCount; i++) {
-      faces[1 + i] = "+"; // fill positions 2–5
+      faces[1 + i] = "+"; // positions 2–5
     }
   } else if (kind === "neg") {
-    const minusCount = clamp(config.minusCount ?? 1, 1, 4);
+    let minusCount = config.minusCount ?? 1;
+    if (minusCount > 4) minusCount = 4;
+    minusCount = clamp(minusCount, 1, 4);
     for (let i = 0; i < minusCount; i++) {
-      faces[1 + i] = "-"; // fill positions 2–5
+      faces[1 + i] = "-"; // positions 2–5
     }
   }
 
@@ -40,10 +44,34 @@ function faceForRoll(config, value) {
   return faces[index];
 }
 
-// Score faces using your rules:
+// Render a single die face as a small square HTML block
+function faceToDieHtml(f) {
+  let symbol = "&nbsp;";
+  let extraClass = "";
+
+  if (f === "1") {
+    symbol = "●";            // 1 point = dot
+    extraClass = "role-roll-face-point";
+  } else if (f === "R") {
+    symbol = "Ⓡ";            // reroll symbol
+    extraClass = "role-roll-face-reroll";
+  } else if (f === "+") {
+    symbol = "+";            // advantage
+    extraClass = "role-roll-face-plus";
+  } else if (f === "-") {
+    symbol = "−";            // negative
+    extraClass = "role-roll-face-minus";
+  } else {
+    extraClass = "role-roll-face-blank"; // blank
+  }
+
+  return `<span class="role-roll-die ${extraClass}">${symbol}</span>`;
+}
+
+// Score faces using the same rules as the web roller:
 // - "1" = 1 point
 // - "R" = 1 point + 1 reroll
-// - "+" / "-" only count if basePoints > 0
+// - "+" / "-" only affect score if basePoints > 0
 // - blank = 0
 function scoreFaces(faces) {
   let basePoints = 0;
@@ -73,92 +101,99 @@ function scoreFaces(faces) {
   return { basePoints, plusCount, minusCount, rerollCount, total };
 }
 
-// Roll a pool of RolEnRoll dice with rerolls.
-// dice = array of configs:
-//   { kind: "normal" }
-//   { kind: "adv", plusCount: 2 }
-//   { kind: "neg", minusCount: 1 }
-async function rollRolenrollPool({ actor = null, dice = [] } = {}) {
-  // Default: 5 normal dice if nothing passed
-  if (!Array.isArray(dice) || dice.length === 0) {
-    dice = Array.from({ length: 5 }, () => ({ kind: "normal" }));
+// ----------------------------------------
+// Interactive rolling with reroll dialog
+// ----------------------------------------
+
+// Internal: roll ONE round of dice, return { round, rerollConfigs }
+async function _rollOneRound(actor, diceConfigs) {
+  const thisRound = [];
+  const rerollConfigs = [];
+
+  for (const config of diceConfigs) {
+    const roll = await (new Roll("1d6")).evaluate({ async: true });
+
+    // Show 3D dice via Dice So Nice
+    if (game.dice3d) {
+      game.dice3d.showForRoll(roll, game.user, true);
+    }
+
+    const value = roll.total;
+    const face = faceForRoll(config, value);
+
+    thisRound.push({ config, roll: value, face });
+
+    if (face === "R") {
+      // same die config will be used in the next round
+      rerollConfigs.push({ ...config });
+    }
   }
 
-  const allFaces = [];
-  const allResults = [];
-
-  let pending = dice.map(d => ({ ...d }));
-  let safety = 0;
-
-  // Each "R" creates another die of the same config
-  while (pending.length > 0 && safety < 100) {
-    safety++;
-    const next = [];
-
-    for (const conf of pending) {
-  const roll = await (new Roll("1d6")).evaluate({ async: true });
-
-  // 🔹 Tell Dice So Nice to show 3D dice
-  if (game.dice3d) {
-    // true = synchronize so everyone sees it
-    game.dice3d.showForRoll(roll, game.user, true);
-  }
-
-  const value = roll.total;
-  const face = faceForRoll(conf, value);
-
-  allFaces.push(face);
-  allResults.push({ config: conf, roll: value, face });
-
-  if (face === "R") {
-    next.push({ ...conf }); // reroll with same kind (normal/adv/neg)
-  }
+  return { round: thisRound, rerollConfigs };
 }
 
+// Internal: finalize scoring & send chat message
+async function _finalizeAndSend(actor, rounds, bonusSuccess, bonusPenalty) {
+  const baseFaces = rounds[0] ? rounds[0].map(r => r.face) : [];
+  const rerollFaces = rounds.slice(1).flat().map(r => r.face);
+  const allFaces = baseFaces.concat(rerollFaces);
 
-    pending = next;
-  }
+  const scoringBase = scoreFaces(allFaces);
+  const diceTotal = scoringBase.total;
 
-  const scoring = scoreFaces(allFaces);
-const { basePoints, plusCount, minusCount, rerollCount, total } = scoring;
+  const baseScore = baseFaces.reduce(
+    (s, f) => s + ((f === "1" || f === "R") ? 1 : 0),
+    0
+  );
+  const rerollPoints = rerollFaces.reduce(
+    (s, f) => s + ((f === "1" || f === "R") ? 1 : 0),
+    0
+  );
+  const plusTokens = allFaces.filter(f => f === "+").length;
+  const minusTokens = allFaces.filter(f => f === "-").length;
+  const rerollCount = allFaces.filter(f => f === "R").length;
 
-// build HTML squares for each die face
-const diceHtml = allFaces.map(f => {
-  let symbol = "&nbsp;";
-  let extraClass = "";
+  let success = Number.isFinite(+bonusSuccess) ? +bonusSuccess : 0;
+  let penalty = Number.isFinite(+bonusPenalty) ? +bonusPenalty : 0;
+  if (success < 0) success = 0;
+  if (penalty < 0) penalty = 0;
 
-  if (f === "1") {
-    symbol = "●";            // 1 point = dot
-    extraClass = "role-roll-face-point";
-  } else if (f === "R") {
-    symbol = "Ⓡ";            // reroll symbol
-    extraClass = "role-roll-face-reroll";
-  } else if (f === "+") {
-    symbol = "+";            // advantage
-    extraClass = "role-roll-face-plus";
-  } else if (f === "-") {
-    symbol = "−";            // negative
-    extraClass = "role-roll-face-minus";
-  } else {
-    // blank
-    extraClass = "role-roll-face-blank";
-  }
+  let finalTotal = diceTotal + success - penalty;
+  if (finalTotal < 0) finalTotal = 0;
 
-  return `<span class="role-roll-die ${extraClass}">${symbol}</span>`;
-}).join("");
+  // Build HTML rows
+  let rowsHtml = "";
+  rounds.forEach((round, idx) => {
+    if (!round.length) return;
+    const facesHtml = round.map(r => faceToDieHtml(r.face)).join("");
 
-const html = `
+    let label = "";
+    if (idx === 0) {
+      label = "";
+    } else {
+      label = `<em>(reroll ${idx})</em>&nbsp;`;
+    }
+
+    rowsHtml += `
+  <div class="role-roll-dice-row">
+    ${label}${facesHtml}
+  </div>`;
+  });
+
+  const html = `
 <div class="role-roll-chat">
   <div class="role-roll-header"><strong>Role&amp;Roll Dice Pool</strong></div>
-  <div class="role-roll-dice-row">
-    ${diceHtml}
+  ${rowsHtml}
+  <div>You triggered ${rerollCount} reroll${rerollCount === 1 ? "" : "s"}.</div>
+  <div>Base from first roll (● + Ⓡ): ${baseScore}</div>
+  <div>Extra points from rerolls: ${rerollPoints}</div>
+  <div>Tokens: +${plusTokens} / -${minusTokens}</div>
+  <div>Succ/Pen: +${success} / -${penalty}</div>
+  <div class="role-roll-total">
+    Dice total: ${diceTotal} point${diceTotal === 1 ? "" : "s"}<br/>
+    Final total: ${finalTotal} point${finalTotal === 1 ? "" : "s"}
   </div>
-  <div>Base points: ${basePoints}</div>
-  <div>+ tokens: ${plusCount}, - tokens: ${minusCount}</div>
-  <div>R&R : ${rerollCount}</div>
-  <div><strong>Total: ${total} point${total === 1 ? "" : "s"}</strong></div>
 </div>`;
-
 
   const speaker = actor
     ? ChatMessage.getSpeaker({ actor })
@@ -170,23 +205,187 @@ const html = `
     content: html
   });
 
-  return { faces: allFaces, results: allResults, scoring };
+  return {
+    rounds,
+    scoring: {
+      ...scoringBase,
+      baseScore,
+      rerollPoints,
+      plusTokens,
+      minusTokens,
+      rerollCount,
+      success,
+      penalty,
+      diceTotal,
+      finalTotal
+    }
+  };
 }
 
-// Expose API
+// Recursive/interactive driver
+async function _runInteractiveRoll({ actor, dice, bonusSuccess, bonusPenalty, rounds = [] }) {
+  // 1. roll current round
+  const { round, rerollConfigs } = await _rollOneRound(actor, dice);
+  rounds.push(round);
+
+  // 2. if no R faces, finalize immediately
+  if (!rerollConfigs.length) {
+    return _finalizeAndSend(actor, rounds, bonusSuccess, bonusPenalty);
+  }
+
+  const rerollCount = rerollConfigs.length;
+
+  // 3. pop up dialog to confirm reroll
+  const content = `
+<p>You got <strong>${rerollCount}</strong> reroll${rerollCount === 1 ? "" : "s"}.</p>
+<p>Press <strong>Reroll</strong> to roll those dice again with the same faces.</p>
+`;
+
+  new Dialog({
+    title: "Role&Roll – Reroll",
+    content,
+    buttons: {
+      reroll: {
+        icon: '<i class="fas fa-dice"></i>',
+        label: `Reroll ${rerollCount} dice`,
+        callback: () => {
+          // run next round with only the dice that had R
+          _runInteractiveRoll({
+            actor,
+            dice: rerollConfigs,
+            bonusSuccess,
+            bonusPenalty,
+            rounds
+          });
+        }
+      },
+      finish: {
+        label: "Finish without reroll",
+        callback: () => {
+          _finalizeAndSend(actor, rounds, bonusSuccess, bonusPenalty);
+        }
+      }
+    },
+    default: "reroll"
+  }).render(true);
+}
+
+// Public entry point
+async function rollRolenrollPool({
+  actor = null,
+  dice = [],
+  bonusSuccess = 0,
+  bonusPenalty = 0
+} = {}) {
+  if (!Array.isArray(dice) || dice.length === 0) {
+    dice = Array.from({ length: 5 }, () => ({ kind: "normal" }));
+  }
+
+  // Start the interactive chain
+  return _runInteractiveRoll({ actor, dice, bonusSuccess, bonusPenalty, rounds: [] });
+}
+
+// ----------------------------------------
+// Helpers to build dice from "tray" inputs
+// ----------------------------------------
+function parseSpecialTokens(specialText) {
+  const specials = [];
+  if (!specialText) return specials;
+
+  const tokens = specialText.split(/[,\s]+/).filter(t => t.length);
+
+  for (const tok of tokens) {
+    if (/^a\d+$/i.test(tok)) {
+      let plusCount = parseInt(tok.slice(1), 10);
+      if (plusCount > 4) {
+        ui.notifications.warn(
+          "Role&Roll: Advantage die can have at most 4 + faces. Using 4 instead."
+        );
+        plusCount = 4;
+      } else if (plusCount < 1) {
+        ui.notifications.warn(
+          "Role&Roll: Advantage die must have at least 1 + face. Using 1 instead."
+        );
+        plusCount = 1;
+      }
+      specials.push({ kind: "adv", plusCount });
+      continue;
+    }
+
+    if (/^n\d+$/i.test(tok)) {
+      let minusCount = parseInt(tok.slice(1), 10);
+      if (minusCount > 4) {
+        ui.notifications.warn(
+          "Role&Roll: Negative die can have at most 4 - faces. Using 4 instead."
+        );
+        minusCount = 4;
+      } else if (minusCount < 1) {
+        ui.notifications.warn(
+          "Role&Roll: Negative die must have at least 1 - face. Using 1 instead."
+        );
+        minusCount = 1;
+      }
+      specials.push({ kind: "neg", minusCount });
+      continue;
+    }
+
+    ui.notifications.warn(`Role&Roll: Ignoring unknown special token "${tok}". Use aX or nX.`);
+  }
+
+  return specials;
+}
+
+function buildDiceFromTray(total, specialText) {
+  let normalCount = 0;
+  const specials = parseSpecialTokens(specialText);
+
+  if (total > 0) {
+    if (specials.length > total) {
+      ui.notifications.warn(
+        "Role&Roll: Number of special dice (a/n) cannot be more than Total dice."
+      );
+      return null;
+    }
+    normalCount = total - specials.length;
+  } else {
+    // no total given
+    if (specials.length === 0) {
+      normalCount = 5; // default
+    } else {
+      normalCount = 0;
+    }
+  }
+
+  const dice = [];
+  for (let i = 0; i < normalCount; i++) {
+    dice.push({ kind: "normal" });
+  }
+  dice.push(...specials);
+
+  if (!dice.length) {
+    ui.notifications.warn("Role&Roll: No dice to roll.");
+    return null;
+  }
+
+  if (dice.length > 50) {
+    ui.notifications.warn("Role&Roll: Too many dice requested (max 50).");
+    return null;
+  }
+
+  return dice;
+}
+
+// ----------------------------------------------------
+// Init: expose API
+// ----------------------------------------------------
 Hooks.once("init", () => {
-  console.log("RolEnRoll | Initializing system & dice logic");
+  console.log("Role&Roll | Initializing system & dice logic (interactive rerolls)");
   game.rolenroll = game.rolenroll || {};
   game.rolenroll.rollPool = rollRolenrollPool;
 });
 
 // ----------------------------------------------------
-// Chat command /rr
-// Usage examples:
-//   /rr           → 5 normal dice
-//   /rr 3         → 3 normal dice
-//   /rr 3 a4 n2   → 3 normal, 1 adv(+4), 1 neg(-2)
-//   /rr a3 a1     → 1 adv(+3), 1 adv(+1)
+// Chat command /rr  (still works)
 // ----------------------------------------------------
 Hooks.on("chatMessage", (chatLog, content, chatData) => {
   if (!content.startsWith("/rr")) return;
@@ -194,65 +393,112 @@ Hooks.on("chatMessage", (chatLog, content, chatData) => {
   const parts = content.trim().split(/\s+/);
   const args = parts.slice(1);
 
-  let normalCount = 0;
-  const dice = [];
+  let totalDice = null;
+  const specialsTokens = [];
 
   for (const arg of args) {
-    // number → that many normal dice
     if (/^\d+$/.test(arg)) {
-      normalCount += parseInt(arg, 10);
+      if (totalDice === null) {
+        totalDice = parseInt(arg, 10);
+      } else {
+        ui.notifications.warn(
+          "Role&Roll: Only the first number is used as the total dice count."
+        );
+      }
       continue;
     }
-
-    // aX → one advantage die with X plus faces
-    if (/^a\d+$/i.test(arg)) {
-      const plusCount = parseInt(arg.slice(1), 10);
-      dice.push({ kind: "adv", plusCount });
-      continue;
-    }
-
-    // nX → one negative die with X minus faces
-    if (/^n\d+$/i.test(arg)) {
-      const minusCount = parseInt(arg.slice(1), 10);
-      dice.push({ kind: "neg", minusCount });
-      continue;
-    }
-
-    // unknown token → ignore
+    specialsTokens.push(arg);
   }
 
-  // If no args at all → default 5 normal dice
-  if (normalCount === 0 && dice.length === 0) {
-    normalCount = 5;
-  }
-
-  for (let i = 0; i < normalCount; i++) {
-    dice.push({ kind: "normal" });
-  }
-
-  if (dice.length > 50) {
-    ui.notifications.warn("RolEnRoll: Too many dice requested (max 50).");
-    dice.length = 50;
-  }
+  const specialText = specialsTokens.join(" ");
+  const dice = buildDiceFromTray(totalDice ?? 0, specialText);
+  if (!dice) return false;
 
   const actor = game.user.character ?? null;
   game.rolenroll.rollPool({ actor, dice });
 
-  return false; // stop normal chat handling
+  return false;
 });
 
 // ----------------------------------------------------
-// RolEnRoll – Dice So Nice integration
+// Role&Roll Dice Tray injected into Chat sidebar
+// ----------------------------------------------------
+Hooks.on("renderChatLog", (app, html, data) => {
+  // avoid duplicating the tray
+  if (html.find("#role-roll-tray").length) return;
+
+  const trayHtml = $(`
+<div id="role-roll-tray" class="role-roll-tray">
+  <div class="role-roll-tray-header"><strong>Role&Roll Dice Tray</strong></div>
+  <div class="form-group">
+    <label>Total:</label>
+    <input type="number" name="rr-total" value="5" min="0" max="50"/>
+  </div>
+  <div class="form-group">
+    <label>Special:</label>
+    <input type="text" name="rr-special" placeholder="e.g. a1 a2 n1"/>
+  </div>
+  <div class="form-group">
+    <label>Success:</label>
+    <input type="number" name="rr-success" value="0" min="0"/>
+  </div>
+  <div class="form-group">
+    <label>Penalty:</label>
+    <input type="number" name="rr-penalty" value="0" min="0"/>
+  </div>
+  <div class="form-group">
+    <button type="button" class="role-roll-tray-roll">
+      <i class="fas fa-dice"></i> Roll
+    </button>
+  </div>
+  <hr/>
+</div>
+`);
+
+  // Insert tray above the chat input form
+  const chatForm = html.find("#chat-form");
+  if (chatForm.length) {
+    trayHtml.insertBefore(chatForm);
+  } else {
+    html.append(trayHtml);
+  }
+
+  // Attach handler
+  trayHtml.find(".role-roll-tray-roll").on("click", () => {
+    const total = parseInt(trayHtml.find('input[name="rr-total"]').val(), 10) || 0;
+    const specialText = String(trayHtml.find('input[name="rr-special"]').val() || "").trim();
+    let success = parseInt(trayHtml.find('input[name="rr-success"]').val(), 10);
+    let penalty = parseInt(trayHtml.find('input[name="rr-penalty"]').val(), 10);
+    if (!Number.isFinite(success)) success = 0;
+    if (!Number.isFinite(penalty)) penalty = 0;
+    if (success < 0) success = 0;
+    if (penalty < 0) penalty = 0;
+
+    const dice = buildDiceFromTray(total, specialText);
+    if (!dice) return;
+
+    const actor = game.user.character ?? null;
+    game.rolenroll.rollPool({
+      actor,
+      dice,
+      bonusSuccess: success,
+      bonusPenalty: penalty
+    });
+  });
+});
+
+// ----------------------------------------------------
+// Role&Roll – Dice So Nice integration
 // ----------------------------------------------------
 Hooks.once("diceSoNiceReady", (dice3d) => {
-  console.log("RolEnRoll | Registering custom d6 with Dice So Nice");
+  console.log("Role&Roll | Registering custom d6 with Dice So Nice");
 
   dice3d.addSystem({
     id: "rolenroll_test",      // MUST match system.json "id"
-    name: "RolEnRoll"
+    name: "Role&Roll"
   });
 
-  // Base RolEnRoll die: ["1", "", "", "", "", "R"]
+  // Base Role&Roll die: ["1", "", "", "", "", "R"]
   const baseLabels = ["1", "", "", "", "", "R"];
 
   dice3d.addDicePreset({
