@@ -57,3 +57,198 @@
 .role-roll-face-blank {
   background-color: #ffffff;
 }
+
+/* ===================================================== */
+/* CHARACTER SHEET HEADER – Role&Roll layout            */
+/* ===================================================== */
+
+/* whole header row */
+.rolenroll-sheet .rr-header {
+  align-items: flex-start;
+}
+
+/* big icon on the left */
+.rolenroll-sheet .rr-icon {
+  width: 150px;
+  height: 150px;
+  object-fit: cover;
+  margin-right: 12px;
+}
+
+/* right side container (name + stats + mental) */
+.rolenroll-sheet .rr-header-main {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+/* name bar */
+.rolenroll-sheet .rr-name-row {
+  margin-bottom: 6px;
+}
+
+.rolenroll-sheet .rr-name-input {
+  width: 100%;
+  font-size: 1.4rem;
+}
+
+/* stats + mental row (under the name) */
+.rolenroll-sheet .rr-stats-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+}
+
+/* LEFT COLUMN: Health / Defense / Will Power  */
+
+.rolenroll-sheet .rr-stats-left {
+  flex: 1.2;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.rolenroll-sheet .rr-stat-line {
+  display: grid;
+  grid-template-columns: auto minmax(40px, 90px) auto minmax(40px, 90px);
+  align-items: center;
+  column-gap: 4px;
+}
+
+.rolenroll-sheet .rr-stat-line label {
+  margin-right: 4px;
+}
+
+.rolenroll-sheet .rr-slash {
+  text-align: center;
+}
+
+/* Defense uses a single long box */
+.rolenroll-sheet .rr-defense-input {
+  grid-column: 2 / 5;
+  width: 100%;
+}
+
+/* MIDDLE COLUMN: LV / EXP */
+
+.rolenroll-sheet .rr-stats-middle {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.rolenroll-sheet .rr-small-box label {
+  display: block;
+  font-weight: bold;
+  text-align: center;
+}
+
+.rolenroll-sheet .rr-small-box input {
+  width: 60px;
+  text-align: center;
+}
+
+/* RIGHT COLUMN: Mental hearts */
+
+.rolenroll-sheet .rr-mental-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.rolenroll-sheet .rr-mental-label {
+  writing-mode: vertical-rl;
+  text-orientation: mixed;
+  font-weight: bold;
+}
+
+/* 6 hearts per row, 3 rows = 18 */
+.rolenroll-sheet .rr-mental-hearts {
+  display: grid;
+  grid-template-columns: repeat(6, 18px);
+  grid-auto-rows: 18px;
+  gap: 2px;
+}
+
+.rolenroll-sheet .rr-heart {
+  width: 18px;
+  height: 18px;
+  text-align: center;
+  line-height: 18px;
+  border: 1px solid #444;
+  border-radius: 2px;
+  cursor: pointer;
+  font-size: 11px;
+  color: #b00;        /* red (healthy) */
+  background: #f1f1f1;
+}
+
+.rolenroll-sheet .rr-heart.damaged {
+  background: #111;   /* black (damaged) */
+  color: #eee;
+}
+
+/* Attribute section layout */
+.rolenroll-sheet .rr-attr-section {
+  margin-top: 1rem;
+  padding: 0.5rem 0.75rem 1rem;
+}
+
+.rolenroll-sheet .rr-attr-header {
+  background: #7b1911;
+  color: #fff;
+  font-weight: 700;
+  padding: 0.25rem 0.5rem;
+  margin-bottom: 0.35rem;
+  font-size: 1.1rem;
+}
+
+.rolenroll-sheet .rr-attr-header-second {
+  margin-top: 0.9rem;
+}
+
+.rolenroll-sheet .rr-attr-row {
+  display: grid;
+  grid-template-columns: 140px auto 40px 150px;
+  align-items: center;
+  column-gap: 0.5rem;
+  margin: 0.15rem 0;
+}
+
+.rolenroll-sheet .rr-attr-name {
+  font-weight: 500;
+}
+
+/* Track of 6 circles */
+.rolenroll-sheet .rr-attr-track {
+  display: flex;
+  gap: 4px;
+}
+
+/* CIRCLE: always 6, white by default */
+.rolenroll-sheet .rr-circle {
+  display: inline-block;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  border: 2px solid #000;
+  box-sizing: border-box;
+  cursor: pointer;
+  background: #ffffff;     /* white circle */
+}
+
+/* Filled = black dot (1 point) */
+.rolenroll-sheet .rr-circle.filled {
+  background: #000000;
+}
+
+/* success checkbox */
+.rolenroll-sheet .rr-attr-success input {
+  width: 18px;
+  height: 18px;
+}
+
+/* Roll button */
+.rolenroll-sheet .rr-attr-rollcell button.rr-attr-roll {
+  width: 100%;
+}

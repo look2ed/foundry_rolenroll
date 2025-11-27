@@ -375,13 +375,228 @@ function buildDiceFromTray(total, specialText) {
   return dice;
 }
 
+// ----------------------------------------
+// Role&Roll Actor Sheet
+// ----------------------------------------
+class RolenrollActorSheet extends ActorSheet {
+  static get defaultOptions() {
+    return foundry.utils.mergeObject(super.defaultOptions, {
+      classes: ["rolenroll", "sheet", "actor"],
+      template: "systems/rolenroll_test/templates/actor-sheet.hbs",
+      width: 600,
+      height: 420,
+      tabs: [{ navSelector: ".sheet-tabs", contentSelector: ".sheet-body", initial: "main" }]
+    });
+  }
+
+  getData(options = {}) {
+    const context = super.getData(options);
+    context.system = this.actor.system;
+    return context;
+  }
+
+  activateListeners(html) {
+    super.activateListeners(html);
+    const actor = this.actor;
+
+    // ---------------- Mental hearts ----------------
+    const heartsContainer = html.find(".rr-mental-hearts");
+    if (heartsContainer.length) {
+      const updateHearts = (value) => {
+        value = Number(value ?? 0);
+        if (Number.isNaN(value) || value < 0) value = 0;
+        if (value > 18) value = 18;
+
+        heartsContainer.attr("data-current", value);
+        const hearts = heartsContainer.find(".rr-heart");
+        hearts.each(function () {
+          const idx = Number(this.dataset.index || 0);
+          if (idx < value) this.classList.add("damaged");
+          else this.classList.remove("damaged");
+        });
+        return value;
+      };
+
+      let current = updateHearts(actor.system?.mentalHearts ?? 0);
+
+      heartsContainer.on("click", ".rr-heart", async (event) => {
+        event.preventDefault();
+        const idx = Number(event.currentTarget.dataset.index || 0);
+
+        let newValue;
+        if (idx + 1 === current) newValue = idx;   // clicking last damaged heart heals 1
+        else newValue = idx + 1;
+
+        current = updateHearts(newValue);
+        await actor.update({ "system.mentalHearts": current });
+      });
+    }
+
+    // ---------------- Attribute circles ----------------
+    html.find(".rr-attr-track").each((_, trackEl) => {
+      const $track = $(trackEl);
+      const path = $track.data("path");
+      if (!path) return;
+
+      // current stored value (0–6)
+      const current = Number($track.data("value")) || 0;
+
+      // paint initial state
+      $track.find(".rr-circle").each((i, circleEl) => {
+        if (i < current) circleEl.classList.add("filled");
+        else circleEl.classList.remove("filled");
+      });
+
+      // click: set number of points = position you clicked
+      $track.find(".rr-circle").on("click", async (ev) => {
+        const circle = ev.currentTarget;
+        const index = Number(circle.dataset.index) || 0;
+        const clickedValue = index + 1; // 1..6
+        let cur = Number($track.data("value")) || 0;
+
+        // If you click the highest filled circle → remove 1 point.
+        // Otherwise → set value to the clicked position.
+        let newVal;
+        if (clickedValue === cur) {
+          newVal = cur - 1;         // step down
+        } else {
+          newVal = clickedValue;    // jump to that many circles
+        }
+
+        if (newVal < 0) newVal = 0;
+        if (newVal > 6) newVal = 6;
+
+        await actor.update({ [path]: newVal });
+
+        $track.data("value", newVal);
+        $track.find(".rr-circle").each((i, cEl) => {
+          if (i < newVal) cEl.classList.add("filled");
+          else cEl.classList.remove("filled");
+        });
+      });
+    });
+
+    // Helper: open a mini tray dialog for "Mod Roll"
+    const openModDialog = (attrKey) => {
+      const attrData = actor.system?.attributes?.[attrKey] || {};
+      const baseDice = Number(attrData.value) || 0;
+      const baseSuccess = attrData.success ? 1 : 0;
+
+      const content = `
+<form class="rr-mod-roll-form">
+  <div class="form-group">
+    <label>Total dice:</label>
+    <input type="number" name="total" value="${baseDice}" min="0" max="50"/>
+  </div>
+  <div class="form-group">
+    <label>Special dice:</label>
+    <input type="text" name="special" placeholder="e.g. a1 a2 n1"/>
+  </div>
+  <div class="form-group">
+    <label>Success:</label>
+    <input type="number" name="success" value="${baseSuccess}" min="0"/>
+  </div>
+  <div class="form-group">
+    <label>Penalty:</label>
+    <input type="number" name="penalty" value="0" min="0"/>
+  </div>
+</form>
+`;
+
+      new Dialog({
+        title: `Role&Roll – ${attrKey} (modified roll)`,
+        content,
+        buttons: {
+          roll: {
+            icon: '<i class="fas fa-dice"></i>',
+            label: "Roll",
+            callback: (htmlDlg) => {
+              const form = htmlDlg[0].querySelector("form");
+              if (!form) return;
+
+              const total = parseInt(form.total.value || "0", 10) || 0;
+              const specialText = String(form.special.value || "").trim();
+              let success = parseInt(form.success.value || "0", 10);
+              let penalty = parseInt(form.penalty.value || "0", 10);
+              if (!Number.isFinite(success) || success < 0) success = 0;
+              if (!Number.isFinite(penalty) || penalty < 0) penalty = 0;
+
+              const dice = buildDiceFromTray(total, specialText);
+              if (!dice) return;
+
+              game.rolenroll.rollPool({
+                actor,
+                dice,
+                bonusSuccess: success,
+                bonusPenalty: penalty
+              });
+            }
+          },
+          cancel: {
+            label: "Cancel"
+          }
+        },
+        default: "roll"
+      }).render(true);
+    };
+
+    // ---------------- Instant roll buttons ----------------
+    html.find(".rr-attr-roll").on("click", (ev) => {
+      const btn = ev.currentTarget;
+      const attrKey = btn.dataset.attr;
+      if (!attrKey) return;
+
+      const attrData = actor.system?.attributes?.[attrKey] || {};
+      const baseDice = Number(attrData.value) || 0;
+      const baseSuccess = attrData.success ? 1 : 0;
+
+      if (baseDice <= 0) {
+        ui.notifications.warn(`Role&Roll: ${attrKey} has 0 dice.`);
+        return;
+      }
+
+      const dice = Array.from({ length: baseDice }, () => ({ kind: "normal" }));
+
+      game.rolenroll.rollPool({
+        actor,
+        dice,
+        bonusSuccess: baseSuccess,
+        bonusPenalty: 0
+      });
+    });
+
+    // ---------------- Modified roll buttons ----------------
+    html.find(".rr-attr-roll-mod").on("click", (ev) => {
+      const btn = ev.currentTarget;
+      const attrKey = btn.dataset.attr;
+      if (!attrKey) return;
+      openModDialog(attrKey);
+    });
+  }
+}
+
 // ----------------------------------------------------
-// Init: expose API
+// Init: expose API & register sheet
 // ----------------------------------------------------
 Hooks.once("init", () => {
-  console.log("Role&Roll | Initializing system & dice logic (interactive rerolls)");
+  console.log("Role&Roll | Initializing system, dice logic, and actor sheet");
+
   game.rolenroll = game.rolenroll || {};
   game.rolenroll.rollPool = rollRolenrollPool;
+
+  // Register our custom actor sheet and make it the default for this system
+  Actors.unregisterSheet("core", ActorSheet);
+  Actors.registerSheet("rolenroll_test", RolenrollActorSheet, {
+    types: ["character"],
+    makeDefault: true
+  });
+});
+
+// Ensure every new Actor has a type (default: "character")
+Hooks.on("preCreateActor", (actor, data, options, userId) => {
+  if (!data.type) {
+    data.type = "character";
+  }
 });
 
 // ----------------------------------------------------

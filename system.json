@@ -3,17 +3,26 @@
   "title": "Rolenroll Test System",
   "description": "A tiny custom system I'm learning with.",
   "version": "0.1.0",
+
   "compatibility": {
     "minimum": 12,
     "verified": 13
   },
+
   "authors": [
     {
       "name": "Panisara Thepthong"
     }
   ],
-  "esmodules": ["module/rnr_test.mjs"],
-  "styles": ["styles/system.css"],
+
+  "esmodules": [
+    "module/rnr_test.mjs"
+  ],
+
+  "styles": [
+    "styles/system.css"
+  ],
+
   "languages": [
     {
       "lang": "en",
@@ -21,5 +30,12 @@
       "path": "lang/en.json"
     }
   ],
-  "packs": []
+
+  "packs": [],
+
+  "documentTypes": {
+    "Actor": {
+      "character": {}
+    }
+  }
 }

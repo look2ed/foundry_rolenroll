@@ -1,0 +1,408 @@
+<form class="rolenroll-sheet actor-sheet" autocomplete="off">
+  <!-- ================= HEADER ================= -->
+  <header class="sheet-header flexrow rr-header">
+    <!-- ICON -->
+    <img class="profile-img rr-icon"
+         src="{{actor.img}}"
+         data-edit="img"
+         title="{{actor.name}}"/>
+
+    <!-- RIGHT SIDE (everything else) -->
+    <div class="rr-header-main">
+
+      <!-- NAME BAR -->
+      <div class="rr-name-row">
+        <input name="name"
+               class="rr-name-input"
+               type="text"
+               value="{{actor.name}}"
+               placeholder="Character Name"/>
+      </div>
+
+      <!-- STATS + MENTAL ROW -->
+      <div class="rr-stats-row">
+
+        <!-- LEFT COLUMN: Health / Defense / Will Power -->
+        <div class="rr-stats-left">
+          <div class="rr-stat-line">
+            <label>Health</label>
+            <input type="number" name="system.hpCurrent" value="{{system.hpCurrent}}" min="0"/>
+            <span class="rr-slash">/</span>
+            <input type="number" name="system.hpMax" value="{{system.hpMax}}" min="0"/>
+          </div>
+
+          <div class="rr-stat-line">
+            <label>Defense</label>
+            <input type="number"
+                   name="system.defense"
+                   value="{{system.defense}}"
+                   min="0"
+                   class="rr-defense-input"/>
+          </div>
+
+          <div class="rr-stat-line">
+            <label>Will Power</label>
+            <input type="number" name="system.wpCurrent" value="{{system.wpCurrent}}" min="0"/>
+            <span class="rr-slash">/</span>
+            <input type="number" name="system.wpMax" value="{{system.wpMax}}" min="0"/>
+          </div>
+        </div>
+
+        <!-- MIDDLE COLUMN: LV / EXP -->
+        <div class="rr-stats-middle">
+          <div class="rr-small-box">
+            <label>LV.</label>
+            <input type="number" name="system.level" value="{{system.level}}" min="0"/>
+          </div>
+          <div class="rr-small-box">
+            <label>EXP.</label>
+            <input type="number" name="system.exp" value="{{system.exp}}" min="0"/>
+          </div>
+        </div>
+
+        <!-- RIGHT COLUMN: Mental hearts -->
+        <div class="rr-mental-wrapper">
+          <div class="rr-mental-label">Mental</div>
+          <div class="rr-mental-hearts" data-current="{{system.mentalHearts}}">
+            {{!-- 18 hearts, index 0–17 --}}
+            <span class="rr-heart" data-index="0">♥</span>
+            <span class="rr-heart" data-index="1">♥</span>
+            <span class="rr-heart" data-index="2">♥</span>
+            <span class="rr-heart" data-index="3">♥</span>
+            <span class="rr-heart" data-index="4">♥</span>
+            <span class="rr-heart" data-index="5">♥</span>
+            <span class="rr-heart" data-index="6">♥</span>
+            <span class="rr-heart" data-index="7">♥</span>
+            <span class="rr-heart" data-index="8">♥</span>
+            <span class="rr-heart" data-index="9">♥</span>
+            <span class="rr-heart" data-index="10">♥</span>
+            <span class="rr-heart" data-index="11">♥</span>
+            <span class="rr-heart" data-index="12">♥</span>
+            <span class="rr-heart" data-index="13">♥</span>
+            <span class="rr-heart" data-index="14">♥</span>
+            <span class="rr-heart" data-index="15">♥</span>
+            <span class="rr-heart" data-index="16">♥</span>
+            <span class="rr-heart" data-index="17">♥</span>
+          </div>
+        </div>
+
+      </div> <!-- end rr-stats-row -->
+
+    </div> <!-- end rr-header-main -->
+  </header>
+
+  <!-- =============== TABS NAV =============== -->
+  <nav class="sheet-tabs tabs" data-group="primary">
+    <a class="item active" data-tab="main">Main</a>
+  </nav>
+
+  <!-- =============== BODY =============== -->
+  <section class="sheet-body">
+    <div class="tab active" data-group="primary" data-tab="main">
+      <section class="rr-attr-section">
+
+        <!-- ========== BODY ========== -->
+        <div class="rr-attr-header">Body</div>
+
+        <!-- Strength -->
+        <div class="rr-attr-row">
+          <div class="rr-attr-name">Strength</div>
+
+          <div class="rr-attr-track"
+               data-path="system.attributes.strength.value"
+               data-value="{{system.attributes.strength.value}}">
+            <span class="rr-circle" data-index="0"></span>
+            <span class="rr-circle" data-index="1"></span>
+            <span class="rr-circle" data-index="2"></span>
+            <span class="rr-circle" data-index="3"></span>
+            <span class="rr-circle" data-index="4"></span>
+            <span class="rr-circle" data-index="5"></span>
+          </div>
+
+          <div class="rr-attr-success">
+            <input type="checkbox"
+                   name="system.attributes.strength.success"
+                   data-dtype="Boolean"
+                   {{#if system.attributes.strength.success}}checked{{/if}} />
+          </div>
+
+          <div class="rr-attr-rollcell">
+            <button type="button"
+                    class="rr-attr-roll"
+                    data-attr="strength">Roll</button>
+            <button type="button"
+                    class="rr-attr-roll-mod"
+                    data-attr="strength">Mod Roll</button>
+          </div>
+        </div>
+
+        <!-- Dexterity -->
+        <div class="rr-attr-row">
+          <div class="rr-attr-name">Dexterity</div>
+
+          <div class="rr-attr-track"
+               data-path="system.attributes.dexterity.value"
+               data-value="{{system.attributes.dexterity.value}}">
+            <span class="rr-circle" data-index="0"></span>
+            <span class="rr-circle" data-index="1"></span>
+            <span class="rr-circle" data-index="2"></span>
+            <span class="rr-circle" data-index="3"></span>
+            <span class="rr-circle" data-index="4"></span>
+            <span class="rr-circle" data-index="5"></span>
+          </div>
+
+          <div class="rr-attr-success">
+            <input type="checkbox"
+                   name="system.attributes.dexterity.success"
+                   data-dtype="Boolean"
+                   {{#if system.attributes.dexterity.success}}checked{{/if}} />
+          </div>
+
+          <div class="rr-attr-rollcell">
+            <button type="button"
+                    class="rr-attr-roll"
+                    data-attr="dexterity">Roll</button>
+            <button type="button"
+                    class="rr-attr-roll-mod"
+                    data-attr="dexterity">Mod Roll</button>
+          </div>
+        </div>
+
+        <!-- Toughness -->
+        <div class="rr-attr-row">
+          <div class="rr-attr-name">Toughness</div>
+
+          <div class="rr-attr-track"
+               data-path="system.attributes.toughness.value"
+               data-value="{{system.attributes.toughness.value}}">
+            <span class="rr-circle" data-index="0"></span>
+            <span class="rr-circle" data-index="1"></span>
+            <span class="rr-circle" data-index="2"></span>
+            <span class="rr-circle" data-index="3"></span>
+            <span class="rr-circle" data-index="4"></span>
+            <span class="rr-circle" data-index="5"></span>
+          </div>
+
+          <div class="rr-attr-success">
+            <input type="checkbox"
+                   name="system.attributes.toughness.success"
+                   data-dtype="Boolean"
+                   {{#if system.attributes.toughness.success}}checked{{/if}} />
+          </div>
+
+          <div class="rr-attr-rollcell">
+            <button type="button"
+                    class="rr-attr-roll"
+                    data-attr="toughness">Roll</button>
+            <button type="button"
+                    class="rr-attr-roll-mod"
+                    data-attr="toughness">Mod Roll</button>
+          </div>
+        </div>
+
+        <!-- ========== INTELLIGENCE & EDUCATION ========== -->
+        <div class="rr-attr-header rr-attr-header-second">
+          Intelligence &amp; Education
+        </div>
+
+        <!-- Intellect -->
+        <div class="rr-attr-row">
+          <div class="rr-attr-name">Intellect</div>
+
+          <div class="rr-attr-track"
+               data-path="system.attributes.intellect.value"
+               data-value="{{system.attributes.intellect.value}}">
+            <span class="rr-circle" data-index="0"></span>
+            <span class="rr-circle" data-index="1"></span>
+            <span class="rr-circle" data-index="2"></span>
+            <span class="rr-circle" data-index="3"></span>
+            <span class="rr-circle" data-index="4"></span>
+            <span class="rr-circle" data-index="5"></span>
+          </div>
+
+          <div class="rr-attr-success">
+            <input type="checkbox"
+                   name="system.attributes.intellect.success"
+                   data-dtype="Boolean"
+                   {{#if system.attributes.intellect.success}}checked{{/if}} />
+          </div>
+
+          <div class="rr-attr-rollcell">
+            <button type="button"
+                    class="rr-attr-roll"
+                    data-attr="intellect">Roll</button>
+            <button type="button"
+                    class="rr-attr-roll-mod"
+                    data-attr="intellect">Mod Roll</button>
+          </div>
+        </div>
+
+        <!-- Aptitude -->
+        <div class="rr-attr-row">
+          <div class="rr-attr-name">Aptitude</div>
+
+          <div class="rr-attr-track"
+               data-path="system.attributes.aptitude.value"
+               data-value="{{system.attributes.aptitude.value}}">
+            <span class="rr-circle" data-index="0"></span>
+            <span class="rr-circle" data-index="1"></span>
+            <span class="rr-circle" data-index="2"></span>
+            <span class="rr-circle" data-index="3"></span>
+            <span class="rr-circle" data-index="4"></span>
+            <span class="rr-circle" data-index="5"></span>
+          </div>
+
+          <div class="rr-attr-success">
+            <input type="checkbox"
+                   name="system.attributes.aptitude.success"
+                   data-dtype="Boolean"
+                   {{#if system.attributes.aptitude.success}}checked{{/if}} />
+          </div>
+
+          <div class="rr-attr-rollcell">
+            <button type="button"
+                    class="rr-attr-roll"
+                    data-attr="aptitude">Roll</button>
+            <button type="button"
+                    class="rr-attr-roll-mod"
+                    data-attr="aptitude">Mod Roll</button>
+          </div>
+        </div>
+
+        <!-- Sanity -->
+        <div class="rr-attr-row">
+          <div class="rr-attr-name">Sanity</div>
+
+          <div class="rr-attr-track"
+               data-path="system.attributes.sanity.value"
+               data-value="{{system.attributes.sanity.value}}">
+            <span class="rr-circle" data-index="0"></span>
+            <span class="rr-circle" data-index="1"></span>
+            <span class="rr-circle" data-index="2"></span>
+            <span class="rr-circle" data-index="3"></span>
+            <span class="rr-circle" data-index="4"></span>
+            <span class="rr-circle" data-index="5"></span>
+          </div>
+
+          <div class="rr-attr-success">
+            <input type="checkbox"
+                   name="system.attributes.sanity.success"
+                   data-dtype="Boolean"
+                   {{#if system.attributes.sanity.success}}checked{{/if}} />
+          </div>
+
+          <div class="rr-attr-rollcell">
+            <button type="button"
+                    class="rr-attr-roll"
+                    data-attr="sanity">Roll</button>
+            <button type="button"
+                    class="rr-attr-roll-mod"
+                    data-attr="sanity">Mod Roll</button>
+          </div>
+        </div>
+
+        <!-- ========== PERSONALITY ========== -->
+        <div class="rr-attr-header rr-attr-header-second">
+          Personality
+        </div>
+
+        <!-- Charm -->
+        <div class="rr-attr-row">
+          <div class="rr-attr-name">Charm</div>
+
+          <div class="rr-attr-track"
+               data-path="system.attributes.charm.value"
+               data-value="{{system.attributes.charm.value}}">
+            <span class="rr-circle" data-index="0"></span>
+            <span class="rr-circle" data-index="1"></span>
+            <span class="rr-circle" data-index="2"></span>
+            <span class="rr-circle" data-index="3"></span>
+            <span class="rr-circle" data-index="4"></span>
+            <span class="rr-circle" data-index="5"></span>
+          </div>
+
+          <div class="rr-attr-success">
+            <input type="checkbox"
+                   name="system.attributes.charm.success"
+                   data-dtype="Boolean"
+                   {{#if system.attributes.charm.success}}checked{{/if}} />
+          </div>
+
+          <div class="rr-attr-rollcell">
+            <button type="button"
+                    class="rr-attr-roll"
+                    data-attr="charm">Roll</button>
+            <button type="button"
+                    class="rr-attr-roll-mod"
+                    data-attr="charm">Mod Roll</button>
+          </div>
+        </div>
+
+        <!-- Rhetoric -->
+        <div class="rr-attr-row">
+          <div class="rr-attr-name">Rhetoric</div>
+
+          <div class="rr-attr-track"
+               data-path="system.attributes.rhetoric.value"
+               data-value="{{system.attributes.rhetoric.value}}">
+            <span class="rr-circle" data-index="0"></span>
+            <span class="rr-circle" data-index="1"></span>
+            <span class="rr-circle" data-index="2"></span>
+            <span class="rr-circle" data-index="3"></span>
+            <span class="rr-circle" data-index="4"></span>
+            <span class="rr-circle" data-index="5"></span>
+          </div>
+
+          <div class="rr-attr-success">
+            <input type="checkbox"
+                   name="system.attributes.rhetoric.success"
+                   data-dtype="Boolean"
+                   {{#if system.attributes.rhetoric.success}}checked{{/if}} />
+          </div>
+
+          <div class="rr-attr-rollcell">
+            <button type="button"
+                    class="rr-attr-roll"
+                    data-attr="rhetoric">Roll</button>
+            <button type="button"
+                    class="rr-attr-roll-mod"
+                    data-attr="rhetoric">Mod Roll</button>
+          </div>
+        </div>
+
+        <!-- Ego -->
+        <div class="rr-attr-row">
+          <div class="rr-attr-name">Ego</div>
+
+          <div class="rr-attr-track"
+               data-path="system.attributes.ego.value"
+               data-value="{{system.attributes.ego.value}}">
+            <span class="rr-circle" data-index="0"></span>
+            <span class="rr-circle" data-index="1"></span>
+            <span class="rr-circle" data-index="2"></span>
+            <span class="rr-circle" data-index="3"></span>
+            <span class="rr-circle" data-index="4"></span>
+            <span class="rr-circle" data-index="5"></span>
+          </div>
+
+          <div class="rr-attr-success">
+            <input type="checkbox"
+                   name="system.attributes.ego.success"
+                   data-dtype="Boolean"
+                   {{#if system.attributes.ego.success}}checked{{/if}} />
+          </div>
+
+          <div class="rr-attr-rollcell">
+            <button type="button"
+                    class="rr-attr-roll"
+                    data-attr="ego">Roll</button>
+            <button type="button"
+                    class="rr-attr-roll-mod"
+                    data-attr="ego">Mod Roll</button>
+          </div>
+        </div>
+
+      </section>
+    </div>
+  </section>
+</form>
