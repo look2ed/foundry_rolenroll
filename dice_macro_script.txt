@@ -1,0 +1,155 @@
+// Role&Roll Dice Tray macro
+if (!game.rolenroll || !game.rolenroll.rollPool) {
+  ui.notifications.error("Role&Roll system is not loaded.");
+  return;
+}
+
+const content = `
+<form class="role-roll-form">
+  <div class="form-group">
+    <label>Total dice:</label>
+    <input type="number" name="total" value="5" min="1" max="50"/>
+  </div>
+
+  <div class="form-group">
+    <label>Special dice:</label>
+    <input type="text" name="special" placeholder="e.g. a1 a2 n1"/>
+    <p class="notes">
+      Use <strong>aX</strong> for positive/advantage dice, <strong>nX</strong> for negative dice.<br/>
+      Example: <code>a1 a2 n1</code>
+    </p>
+  </div>
+
+  <div class="form-group">
+    <label>Success:</label>
+    <input type="number" name="success" value="0" min="0"/>
+  </div>
+
+  <div class="form-group">
+    <label>Penalty:</label>
+    <input type="number" name="penalty" value="0" min="0"/>
+  </div>
+</form>
+`;
+
+new Dialog({
+  title: "Role&Roll Dice Tray",
+  content,
+  buttons: {
+    roll: {
+      icon: '<i class="fas fa-dice"></i>',
+      label: "Roll",
+      callback: html => {
+        // ----- read form values -----
+        let total = parseInt(html.find('[name="total"]').val(), 10);
+        if (Number.isNaN(total) || total < 0) total = 0;
+
+        const specialText = String(html.find('[name="special"]').val() || "").trim();
+        let success = parseInt(html.find('[name="success"]').val(), 10);
+        let penalty = parseInt(html.find('[name="penalty"]').val(), 10);
+
+        if (!Number.isFinite(success)) success = 0;
+        if (!Number.isFinite(penalty)) penalty = 0;
+        if (success < 0) success = 0;
+        if (penalty < 0) penalty = 0;
+
+        // ----- parse special dice: aX / nX -----
+        const specials = [];
+        if (specialText !== "") {
+          const tokens = specialText.split(/[,\s]+/).filter(t => t.length);
+
+          for (const tok of tokens) {
+            // aX → positive/advantage die
+            if (/^a\d+$/i.test(tok)) {
+              let plusCount = parseInt(tok.slice(1), 10);
+              if (plusCount > 4) {
+                ui.notifications.warn(
+                  "Role&Roll: Advantage die can have at most 4 + faces. Using 4 instead."
+                );
+                plusCount = 4;
+              } else if (plusCount < 1) {
+                ui.notifications.warn(
+                  "Role&Roll: Advantage die must have at least 1 + face. Using 1 instead."
+                );
+                plusCount = 1;
+              }
+              specials.push({ kind: "adv", plusCount });
+              continue;
+            }
+
+            // nX → negative die
+            if (/^n\d+$/i.test(tok)) {
+              let minusCount = parseInt(tok.slice(1), 10);
+              if (minusCount > 4) {
+                ui.notifications.warn(
+                  "Role&Roll: Negative die can have at most 4 - faces. Using 4 instead."
+                );
+                minusCount = 4;
+              } else if (minusCount < 1) {
+                ui.notifications.warn(
+                  "Role&Roll: Negative die must have at least 1 - face. Using 1 instead."
+                );
+                minusCount = 1;
+              }
+              specials.push({ kind: "neg", minusCount });
+              continue;
+            }
+
+            ui.notifications.warn(`Role&Roll: Ignoring unknown special token "${tok}". Use aX or nX.`);
+          }
+        }
+
+        // ----- check: specials cannot be more than total (like web) -----
+        if (total > 0 && specials.length > total) {
+          ui.notifications.warn(
+            "Role&Roll: Number of special dice (a/n) cannot be more than Total dice."
+          );
+          return;
+        }
+
+        // ----- work out normal dice count -----
+        let normalCount = 0;
+
+        if (total > 0) {
+          normalCount = total - specials.length;
+        } else {
+          // no total dice entered
+          if (specials.length === 0) {
+            normalCount = 5; // default to 5 normal dice
+          } else {
+            normalCount = 0; // only specials
+          }
+        }
+
+        const dice = [];
+        for (let i = 0; i < normalCount; i++) {
+          dice.push({ kind: "normal" });
+        }
+        dice.push(...specials);
+
+        if (!dice.length) {
+          ui.notifications.warn("Role&Roll: No dice to roll.");
+          return;
+        }
+
+        if (dice.length > 50) {
+          ui.notifications.warn("Role&Roll: Too many dice requested (max 50).");
+          return;
+        }
+
+        const actor = game.user.character ?? null;
+
+        game.rolenroll.rollPool({
+          actor,
+          dice,
+          bonusSuccess: success,
+          bonusPenalty: penalty
+        });
+      }
+    },
+    cancel: {
+      label: "Cancel"
+    }
+  },
+  default: "roll"
+}).render(true);
