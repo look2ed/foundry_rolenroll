@@ -2,11 +2,14 @@
   "id": "rolenroll_test",
   "title": "Rolenroll Test System",
   "description": "A tiny custom system I'm learning with.",
-  "version": "0.1.0",
+  "version": "1.0.6",
+
+  "manifest": "https://raw.githubusercontent.com/look2ed/foundry_rolenroll/main/system.json",
+  "download": "https://github.com/look2ed/foundry_rolenroll/archive/refs/heads/main.zip",
 
   "compatibility": {
-    "minimum": 12,
-    "verified": 13
+    "minimum": 10,
+    "verified": 12
   },
 
   "authors": [
@@ -35,7 +38,10 @@
 
   "documentTypes": {
     "Actor": {
-      "character": {}
+      "types": ["character"]
+    },
+    "Item": {
+      "types": []
     }
   }
 }

@@ -150,16 +150,20 @@
 
 /* RIGHT COLUMN: Mental hearts */
 
+/* Mental block – label above hearts */
 .rolenroll-sheet .rr-mental-wrapper {
   display: flex;
-  align-items: center;
-  gap: 6px;
+  flex-direction: column;      /* stack vertically */
+  align-items: flex-start;
+  gap: 0.25rem;
 }
 
 .rolenroll-sheet .rr-mental-label {
-  writing-mode: vertical-rl;
-  text-orientation: mixed;
   font-weight: bold;
+  font-size: 14px;
+  writing-mode: horizontal-tb; /* normal text direction */
+  transform: none;             /* remove vertical rotation */
+  margin: 0;
 }
 
 /* 6 hearts per row, 3 rows = 18 */

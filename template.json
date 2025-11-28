@@ -1,0 +1,52 @@
+{
+  "Actor": {
+    "types": ["character"],
+    "templates": {
+      "character": {
+        "system": {
+          "hpCurrent": 0,
+          "hpMax": 0,
+          "defense": 0,
+          "wpCurrent": 0,
+          "wpMax": 0,
+          "level": 1,
+          "exp": 0,
+          "mentalHearts": 0,
+
+          "attributes": {
+            "strength":  { "value": 0, "success": false },
+            "dexterity": { "value": 0, "success": false },
+            "toughness": { "value": 0, "success": false },
+            "intellect": { "value": 0, "success": false },
+            "aptitude":  { "value": 0, "success": false },
+            "sanity":    { "value": 0, "success": false },
+            "charm":     { "value": 0, "success": false },
+            "rhetoric":  { "value": 0, "success": false },
+            "ego":       { "value": 0, "success": false }
+          },
+
+          "skills": {
+            "academic": {
+              "generalEd":  { "value": 0, "success": false },
+              "search":     { "value": 0, "success": false },
+              "history":    { "value": 0, "success": false },
+              "art":        { "value": 0, "success": false },
+              "medicine":   { "value": 0, "success": false },
+              "herb":       { "value": 0, "success": false },
+              "firstAid":   { "value": 0, "success": false },
+              "law":        { "value": 0, "success": false },
+              "electronic": { "value": 0, "success": false },
+              "mechanical": { "value": 0, "success": false },
+              "craft":      { "value": 0, "success": false }
+            }
+          }
+        }
+      }
+    }
+  },
+
+  "Item": {
+    "types": [],
+    "templates": {}
+  }
+}

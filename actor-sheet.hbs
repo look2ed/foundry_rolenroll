@@ -93,12 +93,15 @@
 
   <!-- =============== TABS NAV =============== -->
   <nav class="sheet-tabs tabs" data-group="primary">
-    <a class="item active" data-tab="main">Main</a>
+    <a class="item active" data-tab="attribute">Attribute</a>
+    <a class="item" data-tab="general">General Ability</a>
   </nav>
 
   <!-- =============== BODY =============== -->
   <section class="sheet-body">
-    <div class="tab active" data-group="primary" data-tab="main">
+
+    {{!-- ========= TAB: ATTRIBUTE ========= --}}
+    <div class="tab active" data-group="primary" data-tab="attribute">
       <section class="rr-attr-section">
 
         <!-- ========== BODY ========== -->
@@ -107,7 +110,6 @@
         <!-- Strength -->
         <div class="rr-attr-row">
           <div class="rr-attr-name">Strength</div>
-
           <div class="rr-attr-track"
                data-path="system.attributes.strength.value"
                data-value="{{system.attributes.strength.value}}">
@@ -118,28 +120,21 @@
             <span class="rr-circle" data-index="4"></span>
             <span class="rr-circle" data-index="5"></span>
           </div>
-
           <div class="rr-attr-success">
             <input type="checkbox"
                    name="system.attributes.strength.success"
                    data-dtype="Boolean"
                    {{#if system.attributes.strength.success}}checked{{/if}} />
           </div>
-
           <div class="rr-attr-rollcell">
-            <button type="button"
-                    class="rr-attr-roll"
-                    data-attr="strength">Roll</button>
-            <button type="button"
-                    class="rr-attr-roll-mod"
-                    data-attr="strength">Mod Roll</button>
+            <button type="button" class="rr-attr-roll" data-attr="strength">Roll</button>
+            <button type="button" class="rr-attr-roll-mod" data-attr="strength">Mod Roll</button>
           </div>
         </div>
 
         <!-- Dexterity -->
         <div class="rr-attr-row">
           <div class="rr-attr-name">Dexterity</div>
-
           <div class="rr-attr-track"
                data-path="system.attributes.dexterity.value"
                data-value="{{system.attributes.dexterity.value}}">
@@ -150,28 +145,21 @@
             <span class="rr-circle" data-index="4"></span>
             <span class="rr-circle" data-index="5"></span>
           </div>
-
           <div class="rr-attr-success">
             <input type="checkbox"
                    name="system.attributes.dexterity.success"
                    data-dtype="Boolean"
                    {{#if system.attributes.dexterity.success}}checked{{/if}} />
           </div>
-
           <div class="rr-attr-rollcell">
-            <button type="button"
-                    class="rr-attr-roll"
-                    data-attr="dexterity">Roll</button>
-            <button type="button"
-                    class="rr-attr-roll-mod"
-                    data-attr="dexterity">Mod Roll</button>
+            <button type="button" class="rr-attr-roll" data-attr="dexterity">Roll</button>
+            <button type="button" class="rr-attr-roll-mod" data-attr="dexterity">Mod Roll</button>
           </div>
         </div>
 
         <!-- Toughness -->
         <div class="rr-attr-row">
           <div class="rr-attr-name">Toughness</div>
-
           <div class="rr-attr-track"
                data-path="system.attributes.toughness.value"
                data-value="{{system.attributes.toughness.value}}">
@@ -182,21 +170,15 @@
             <span class="rr-circle" data-index="4"></span>
             <span class="rr-circle" data-index="5"></span>
           </div>
-
           <div class="rr-attr-success">
             <input type="checkbox"
                    name="system.attributes.toughness.success"
                    data-dtype="Boolean"
                    {{#if system.attributes.toughness.success}}checked{{/if}} />
           </div>
-
           <div class="rr-attr-rollcell">
-            <button type="button"
-                    class="rr-attr-roll"
-                    data-attr="toughness">Roll</button>
-            <button type="button"
-                    class="rr-attr-roll-mod"
-                    data-attr="toughness">Mod Roll</button>
+            <button type="button" class="rr-attr-roll" data-attr="toughness">Roll</button>
+            <button type="button" class="rr-attr-roll-mod" data-attr="toughness">Mod Roll</button>
           </div>
         </div>
 
@@ -208,7 +190,6 @@
         <!-- Intellect -->
         <div class="rr-attr-row">
           <div class="rr-attr-name">Intellect</div>
-
           <div class="rr-attr-track"
                data-path="system.attributes.intellect.value"
                data-value="{{system.attributes.intellect.value}}">
@@ -219,28 +200,21 @@
             <span class="rr-circle" data-index="4"></span>
             <span class="rr-circle" data-index="5"></span>
           </div>
-
           <div class="rr-attr-success">
             <input type="checkbox"
                    name="system.attributes.intellect.success"
                    data-dtype="Boolean"
                    {{#if system.attributes.intellect.success}}checked{{/if}} />
           </div>
-
           <div class="rr-attr-rollcell">
-            <button type="button"
-                    class="rr-attr-roll"
-                    data-attr="intellect">Roll</button>
-            <button type="button"
-                    class="rr-attr-roll-mod"
-                    data-attr="intellect">Mod Roll</button>
+            <button type="button" class="rr-attr-roll" data-attr="intellect">Roll</button>
+            <button type="button" class="rr-attr-roll-mod" data-attr="intellect">Mod Roll</button>
           </div>
         </div>
 
         <!-- Aptitude -->
         <div class="rr-attr-row">
           <div class="rr-attr-name">Aptitude</div>
-
           <div class="rr-attr-track"
                data-path="system.attributes.aptitude.value"
                data-value="{{system.attributes.aptitude.value}}">
@@ -251,28 +225,21 @@
             <span class="rr-circle" data-index="4"></span>
             <span class="rr-circle" data-index="5"></span>
           </div>
-
           <div class="rr-attr-success">
             <input type="checkbox"
                    name="system.attributes.aptitude.success"
                    data-dtype="Boolean"
                    {{#if system.attributes.aptitude.success}}checked{{/if}} />
           </div>
-
           <div class="rr-attr-rollcell">
-            <button type="button"
-                    class="rr-attr-roll"
-                    data-attr="aptitude">Roll</button>
-            <button type="button"
-                    class="rr-attr-roll-mod"
-                    data-attr="aptitude">Mod Roll</button>
+            <button type="button" class="rr-attr-roll" data-attr="aptitude">Roll</button>
+            <button type="button" class="rr-attr-roll-mod" data-attr="aptitude">Mod Roll</button>
           </div>
         </div>
 
         <!-- Sanity -->
         <div class="rr-attr-row">
           <div class="rr-attr-name">Sanity</div>
-
           <div class="rr-attr-track"
                data-path="system.attributes.sanity.value"
                data-value="{{system.attributes.sanity.value}}">
@@ -283,21 +250,15 @@
             <span class="rr-circle" data-index="4"></span>
             <span class="rr-circle" data-index="5"></span>
           </div>
-
           <div class="rr-attr-success">
             <input type="checkbox"
                    name="system.attributes.sanity.success"
                    data-dtype="Boolean"
                    {{#if system.attributes.sanity.success}}checked{{/if}} />
           </div>
-
           <div class="rr-attr-rollcell">
-            <button type="button"
-                    class="rr-attr-roll"
-                    data-attr="sanity">Roll</button>
-            <button type="button"
-                    class="rr-attr-roll-mod"
-                    data-attr="sanity">Mod Roll</button>
+            <button type="button" class="rr-attr-roll" data-attr="sanity">Roll</button>
+            <button type="button" class="rr-attr-roll-mod" data-attr="sanity">Mod Roll</button>
           </div>
         </div>
 
@@ -309,7 +270,6 @@
         <!-- Charm -->
         <div class="rr-attr-row">
           <div class="rr-attr-name">Charm</div>
-
           <div class="rr-attr-track"
                data-path="system.attributes.charm.value"
                data-value="{{system.attributes.charm.value}}">
@@ -320,28 +280,21 @@
             <span class="rr-circle" data-index="4"></span>
             <span class="rr-circle" data-index="5"></span>
           </div>
-
           <div class="rr-attr-success">
             <input type="checkbox"
                    name="system.attributes.charm.success"
                    data-dtype="Boolean"
                    {{#if system.attributes.charm.success}}checked{{/if}} />
           </div>
-
           <div class="rr-attr-rollcell">
-            <button type="button"
-                    class="rr-attr-roll"
-                    data-attr="charm">Roll</button>
-            <button type="button"
-                    class="rr-attr-roll-mod"
-                    data-attr="charm">Mod Roll</button>
+            <button type="button" class="rr-attr-roll" data-attr="charm">Roll</button>
+            <button type="button" class="rr-attr-roll-mod" data-attr="charm">Mod Roll</button>
           </div>
         </div>
 
         <!-- Rhetoric -->
         <div class="rr-attr-row">
           <div class="rr-attr-name">Rhetoric</div>
-
           <div class="rr-attr-track"
                data-path="system.attributes.rhetoric.value"
                data-value="{{system.attributes.rhetoric.value}}">
@@ -352,28 +305,21 @@
             <span class="rr-circle" data-index="4"></span>
             <span class="rr-circle" data-index="5"></span>
           </div>
-
           <div class="rr-attr-success">
             <input type="checkbox"
                    name="system.attributes.rhetoric.success"
                    data-dtype="Boolean"
                    {{#if system.attributes.rhetoric.success}}checked{{/if}} />
           </div>
-
           <div class="rr-attr-rollcell">
-            <button type="button"
-                    class="rr-attr-roll"
-                    data-attr="rhetoric">Roll</button>
-            <button type="button"
-                    class="rr-attr-roll-mod"
-                    data-attr="rhetoric">Mod Roll</button>
+            <button type="button" class="rr-attr-roll" data-attr="rhetoric">Roll</button>
+            <button type="button" class="rr-attr-roll-mod" data-attr="rhetoric">Mod Roll</button>
           </div>
         </div>
 
         <!-- Ego -->
         <div class="rr-attr-row">
           <div class="rr-attr-name">Ego</div>
-
           <div class="rr-attr-track"
                data-path="system.attributes.ego.value"
                data-value="{{system.attributes.ego.value}}">
@@ -384,25 +330,392 @@
             <span class="rr-circle" data-index="4"></span>
             <span class="rr-circle" data-index="5"></span>
           </div>
-
           <div class="rr-attr-success">
             <input type="checkbox"
                    name="system.attributes.ego.success"
                    data-dtype="Boolean"
                    {{#if system.attributes.ego.success}}checked{{/if}} />
           </div>
-
           <div class="rr-attr-rollcell">
-            <button type="button"
-                    class="rr-attr-roll"
-                    data-attr="ego">Roll</button>
-            <button type="button"
-                    class="rr-attr-roll-mod"
-                    data-attr="ego">Mod Roll</button>
+            <button type="button" class="rr-attr-roll" data-attr="ego">Roll</button>
+            <button type="button" class="rr-attr-roll-mod" data-attr="ego">Mod Roll</button>
           </div>
         </div>
 
       </section>
-    </div>
-  </section>
+    </div>  {{!-- end Attribute tab --}}
+
+    {{!-- ========= TAB: GENERAL ABILITY (Academic) ========= --}}
+    <div class="tab" data-group="primary" data-tab="general">
+      <section class="rr-attr-section">
+
+        <div class="rr-attr-header">Academic</div>
+
+        {{!-- 1. General Education (INT) --}}
+        <div class="rr-attr-row">
+          <div class="rr-attr-name">General Education (INT)</div>
+          <div class="rr-attr-track"
+               data-path="system.skills.academic.generalEd.value"
+               data-value="{{system.skills.academic.generalEd.value}}">
+            <span class="rr-circle" data-index="0"></span>
+            <span class="rr-circle" data-index="1"></span>
+            <span class="rr-circle" data-index="2"></span>
+            <span class="rr-circle" data-index="3"></span>
+            <span class="rr-circle" data-index="4"></span>
+            <span class="rr-circle" data-index="5"></span>
+          </div>
+          <div class="rr-attr-success">
+            <input type="checkbox"
+                   name="system.skills.academic.generalEd.success"
+                   data-dtype="Boolean"
+                   {{#if system.skills.academic.generalEd.success}}checked{{/if}} />
+          </div>
+          <div class="rr-attr-rollcell">
+            <button type="button"
+                    class="rr-skill-roll"
+                    data-group="academic"
+                    data-skill="generalEd"
+                    data-base-attr="intellect">Roll</button>
+            <button type="button"
+                    class="rr-skill-roll-mod"
+                    data-group="academic"
+                    data-skill="generalEd"
+                    data-base-attr="intellect">Mod Roll</button>
+          </div>
+        </div>
+
+        {{!-- 2. Search (APT) --}}
+        <div class="rr-attr-row">
+          <div class="rr-attr-name">Search (APT)</div>
+          <div class="rr-attr-track"
+               data-path="system.skills.academic.search.value"
+               data-value="{{system.skills.academic.search.value}}">
+            <span class="rr-circle" data-index="0"></span>
+            <span class="rr-circle" data-index="1"></span>
+            <span class="rr-circle" data-index="2"></span>
+            <span class="rr-circle" data-index="3"></span>
+            <span class="rr-circle" data-index="4"></span>
+            <span class="rr-circle" data-index="5"></span>
+          </div>
+          <div class="rr-attr-success">
+            <input type="checkbox"
+                   name="system.skills.academic.search.success"
+                   data-dtype="Boolean"
+                   {{#if system.skills.academic.search.success}}checked{{/if}} />
+          </div>
+          <div class="rr-attr-rollcell">
+            <button type="button"
+                    class="rr-skill-roll"
+                    data-group="academic"
+                    data-skill="search"
+                    data-base-attr="aptitude">Roll</button>
+            <button type="button"
+                    class="rr-skill-roll-mod"
+                    data-group="academic"
+                    data-skill="search"
+                    data-base-attr="aptitude">Mod Roll</button>
+          </div>
+        </div>
+
+        {{!-- 3. History (INT) --}}
+        <div class="rr-attr-row">
+          <div class="rr-attr-name">History (INT)</div>
+          <div class="rr-attr-track"
+               data-path="system.skills.academic.history.value"
+               data-value="{{system.skills.academic.history.value}}">
+            <span class="rr-circle" data-index="0"></span>
+            <span class="rr-circle" data-index="1"></span>
+            <span class="rr-circle" data-index="2"></span>
+            <span class="rr-circle" data-index="3"></span>
+            <span class="rr-circle" data-index="4"></span>
+            <span class="rr-circle" data-index="5"></span>
+          </div>
+          <div class="rr-attr-success">
+            <input type="checkbox"
+                   name="system.skills.academic.history.success"
+                   data-dtype="Boolean"
+                   {{#if system.skills.academic.history.success}}checked{{/if}} />
+          </div>
+          <div class="rr-attr-rollcell">
+            <button type="button"
+                    class="rr-skill-roll"
+                    data-group="academic"
+                    data-skill="history"
+                    data-base-attr="intellect">Roll</button>
+            <button type="button"
+                    class="rr-skill-roll-mod"
+                    data-group="academic"
+                    data-skill="history"
+                    data-base-attr="intellect">Mod Roll</button>
+          </div>
+        </div>
+
+        {{!-- 4. Art (DEX/INT, uses highest of DEX or INT) --}}
+        <div class="rr-attr-row">
+          <div class="rr-attr-name">Art (DEX/INT)</div>
+          <div class="rr-attr-track"
+               data-path="system.skills.academic.art.value"
+               data-value="{{system.skills.academic.art.value}}">
+            <span class="rr-circle" data-index="0"></span>
+            <span class="rr-circle" data-index="1"></span>
+            <span class="rr-circle" data-index="2"></span>
+            <span class="rr-circle" data-index="3"></span>
+            <span class="rr-circle" data-index="4"></span>
+            <span class="rr-circle" data-index="5"></span>
+          </div>
+          <div class="rr-attr-success">
+            <input type="checkbox"
+                   name="system.skills.academic.art.success"
+                   data-dtype="Boolean"
+                   {{#if system.skills.academic.art.success}}checked{{/if}} />
+          </div>
+          <div class="rr-attr-rollcell">
+            <button type="button"
+                    class="rr-skill-roll"
+                    data-group="academic"
+                    data-skill="art"
+                    data-base-attr="dexterity,intellect">Roll</button>
+            <button type="button"
+                    class="rr-skill-roll-mod"
+                    data-group="academic"
+                    data-skill="art"
+                    data-base-attr="dexterity,intellect">Mod Roll</button>
+          </div>
+        </div>
+
+        {{!-- 5. Medicine (INT) --}}
+        <div class="rr-attr-row">
+          <div class="rr-attr-name">Medicine (INT)</div>
+          <div class="rr-attr-track"
+               data-path="system.skills.academic.medicine.value"
+               data-value="{{system.skills.academic.medicine.value}}">
+            <span class="rr-circle" data-index="0"></span>
+            <span class="rr-circle" data-index="1"></span>
+            <span class="rr-circle" data-index="2"></span>
+            <span class="rr-circle" data-index="3"></span>
+            <span class="rr-circle" data-index="4"></span>
+            <span class="rr-circle" data-index="5"></span>
+          </div>
+          <div class="rr-attr-success">
+            <input type="checkbox"
+                   name="system.skills.academic.medicine.success"
+                   data-dtype="Boolean"
+                   {{#if system.skills.academic.medicine.success}}checked{{/if}} />
+          </div>
+          <div class="rr-attr-rollcell">
+            <button type="button"
+                    class="rr-skill-roll"
+                    data-group="academic"
+                    data-skill="medicine"
+                    data-base-attr="intellect">Roll</button>
+            <button type="button"
+                    class="rr-skill-roll-mod"
+                    data-group="academic"
+                    data-skill="medicine"
+                    data-base-attr="intellect">Mod Roll</button>
+          </div>
+        </div>
+
+        {{!-- 6. Herb (INT) --}}
+        <div class="rr-attr-row">
+          <div class="rr-attr-name">Herb (INT)</div>
+          <div class="rr-attr-track"
+               data-path="system.skills.academic.herb.value"
+               data-value="{{system.skills.academic.herb.value}}">
+            <span class="rr-circle" data-index="0"></span>
+            <span class="rr-circle" data-index="1"></span>
+            <span class="rr-circle" data-index="2"></span>
+            <span class="rr-circle" data-index="3"></span>
+            <span class="rr-circle" data-index="4"></span>
+            <span class="rr-circle" data-index="5"></span>
+          </div>
+          <div class="rr-attr-success">
+            <input type="checkbox"
+                   name="system.skills.academic.herb.success"
+                   data-dtype="Boolean"
+                   {{#if system.skills.academic.herb.success}}checked{{/if}} />
+          </div>
+          <div class="rr-attr-rollcell">
+            <button type="button"
+                    class="rr-skill-roll"
+                    data-group="academic"
+                    data-skill="herb"
+                    data-base-attr="intellect">Roll</button>
+            <button type="button"
+                    class="rr-skill-roll-mod"
+                    data-group="academic"
+                    data-skill="herb"
+                    data-base-attr="intellect">Mod Roll</button>
+          </div>
+        </div>
+
+        {{!-- 7. First Aid (APT) --}}
+        <div class="rr-attr-row">
+          <div class="rr-attr-name">First Aid (APT)</div>
+          <div class="rr-attr-track"
+               data-path="system.skills.academic.firstAid.value"
+               data-value="{{system.skills.academic.firstAid.value}}">
+            <span class="rr-circle" data-index="0"></span>
+            <span class="rr-circle" data-index="1"></span>
+            <span class="rr-circle" data-index="2"></span>
+            <span class="rr-circle" data-index="3"></span>
+            <span class="rr-circle" data-index="4"></span>
+            <span class="rr-circle" data-index="5"></span>
+          </div>
+          <div class="rr-attr-success">
+            <input type="checkbox"
+                   name="system.skills.academic.firstAid.success"
+                   data-dtype="Boolean"
+                   {{#if system.skills.academic.firstAid.success}}checked{{/if}} />
+          </div>
+          <div class="rr-attr-rollcell">
+            <button type="button"
+                    class="rr-skill-roll"
+                    data-group="academic"
+                    data-skill="firstAid"
+                    data-base-attr="aptitude">Roll</button>
+            <button type="button"
+                    class="rr-skill-roll-mod"
+                    data-group="academic"
+                    data-skill="firstAid"
+                    data-base-attr="aptitude">Mod Roll</button>
+          </div>
+        </div>
+
+        {{!-- 8. Law (INT) --}}
+        <div class="rr-attr-row">
+          <div class="rr-attr-name">Law (INT)</div>
+          <div class="rr-attr-track"
+               data-path="system.skills.academic.law.value"
+               data-value="{{system.skills.academic.law.value}}">
+            <span class="rr-circle" data-index="0"></span>
+            <span class="rr-circle" data-index="1"></span>
+            <span class="rr-circle" data-index="2"></span>
+            <span class="rr-circle" data-index="3"></span>
+            <span class="rr-circle" data-index="4"></span>
+            <span class="rr-circle" data-index="5"></span>
+          </div>
+          <div class="rr-attr-success">
+            <input type="checkbox"
+                   name="system.skills.academic.law.success"
+                   data-dtype="Boolean"
+                   {{#if system.skills.academic.law.success}}checked{{/if}} />
+          </div>
+          <div class="rr-attr-rollcell">
+            <button type="button"
+                    class="rr-skill-roll"
+                    data-group="academic"
+                    data-skill="law"
+                    data-base-attr="intellect">Roll</button>
+            <button type="button"
+                    class="rr-skill-roll-mod"
+                    data-group="academic"
+                    data-skill="law"
+                    data-base-attr="intellect">Mod Roll</button>
+          </div>
+        </div>
+
+        {{!-- 9. Electronic (INT) --}}
+        <div class="rr-attr-row">
+          <div class="rr-attr-name">Electronic (INT)</div>
+          <div class="rr-attr-track"
+               data-path="system.skills.academic.electronic.value"
+               data-value="{{system.skills.academic.electronic.value}}">
+            <span class="rr-circle" data-index="0"></span>
+            <span class="rr-circle" data-index="1"></span>
+            <span class="rr-circle" data-index="2"></span>
+            <span class="rr-circle" data-index="3"></span>
+            <span class="rr-circle" data-index="4"></span>
+            <span class="rr-circle" data-index="5"></span>
+          </div>
+          <div class="rr-attr-success">
+            <input type="checkbox"
+                   name="system.skills.academic.electronic.success"
+                   data-dtype="Boolean"
+                   {{#if system.skills.academic.electronic.success}}checked{{/if}} />
+          </div>
+          <div class="rr-attr-rollcell">
+            <button type="button"
+                    class="rr-skill-roll"
+                    data-group="academic"
+                    data-skill="electronic"
+                    data-base-attr="intellect">Roll</button>
+            <button type="button"
+                    class="rr-skill-roll-mod"
+                    data-group="academic"
+                    data-skill="electronic"
+                    data-base-attr="intellect">Mod Roll</button>
+          </div>
+        </div>
+
+        {{!-- 10. Mechanical (INT) --}}
+        <div class="rr-attr-row">
+          <div class="rr-attr-name">Mechanical (INT)</div>
+          <div class="rr-attr-track"
+               data-path="system.skills.academic.mechanical.value"
+               data-value="{{system.skills.academic.mechanical.value}}">
+            <span class="rr-circle" data-index="0"></span>
+            <span class="rr-circle" data-index="1"></span>
+            <span class="rr-circle" data-index="2"></span>
+            <span class="rr-circle" data-index="3"></span>
+            <span class="rr-circle" data-index="4"></span>
+            <span class="rr-circle" data-index="5"></span>
+          </div>
+          <div class="rr-attr-success">
+            <input type="checkbox"
+                   name="system.skills.academic.mechanical.success"
+                   data-dtype="Boolean"
+                   {{#if system.skills.academic.mechanical.success}}checked{{/if}} />
+          </div>
+          <div class="rr-attr-rollcell">
+            <button type="button"
+                    class="rr-skill-roll"
+                    data-group="academic"
+                    data-skill="mechanical"
+                    data-base-attr="intellect">Roll</button>
+            <button type="button"
+                    class="rr-skill-roll-mod"
+                    data-group="academic"
+                    data-skill="mechanical"
+                    data-base-attr="intellect">Mod Roll</button>
+          </div>
+        </div>
+
+        {{!-- 11. Craft (DEX) --}}
+        <div class="rr-attr-row">
+          <div class="rr-attr-name">Craft (DEX)</div>
+          <div class="rr-attr-track"
+               data-path="system.skills.academic.craft.value"
+               data-value="{{system.skills.academic.craft.value}}">
+            <span class="rr-circle" data-index="0"></span>
+            <span class="rr-circle" data-index="1"></span>
+            <span class="rr-circle" data-index="2"></span>
+            <span class="rr-circle" data-index="3"></span>
+            <span class="rr-circle" data-index="4"></span>
+            <span class="rr-circle" data-index="5"></span>
+          </div>
+          <div class="rr-attr-success">
+            <input type="checkbox"
+                   name="system.skills.academic.craft.success"
+                   data-dtype="Boolean"
+                   {{#if system.skills.academic.craft.success}}checked{{/if}} />
+          </div>
+          <div class="rr-attr-rollcell">
+            <button type="button"
+                    class="rr-skill-roll"
+                    data-group="academic"
+                    data-skill="craft"
+                    data-base-attr="dexterity">Roll</button>
+            <button type="button"
+                    class="rr-skill-roll-mod"
+                    data-group="academic"
+                    data-skill="craft"
+                    data-base-attr="dexterity">Mod Roll</button>
+          </div>
+        </div>
+
+      </section>
+    </div>  {{!-- end General tab --}}
+
+  </section> <!-- end sheet-body -->
 </form>
